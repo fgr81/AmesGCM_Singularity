@@ -101,9 +101,7 @@ grep -v ".*cmip.*" pathnames.all > path_names
 /bin/mv path_names pathnames.all
 grep -v ".*fv_cmp.*" pathnames.all > path_names
 /bin/mv path_names pathnames.all
-grep -v "atmos_cubed_sphere/driver/GFDL/.*"  pathnames.all  > path_names
-/bin/mv path_names pathnames.all
-grep -v "atmos_cubed_sphere/driver/SHiELD/.*"  pathnames.all  > path_names
+egrep -v "atmos_cubed_sphere/driver/*" pathnames.all > pathnames_atmos_cubed
 mv path_names pathnames.all
 grep -v ".*/monin_obukhov/monin_obukhov.*"  pathnames.all  > path_names
 
