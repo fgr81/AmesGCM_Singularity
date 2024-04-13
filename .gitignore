@@ -1,3 +1,6 @@
+src/AM4
+src/compile.mine
+src/mk*
 *_sb*
 *.sif
 tmp
