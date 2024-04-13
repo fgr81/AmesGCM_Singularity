@@ -7,7 +7,7 @@ From: ubuntu:18.04
 	export SINGULARITY_TMPDIR=${_pwd}/tmp
 
 %help
-	Environment (Ubuntu 20.04 + mandatory and optional libs) for NASA AmesGCM (https://github.com/nasa/AmesGCM).
+	Environment (Ubuntu 18.04 + mandatory and optional libs) for NASA AmesGCM (https://github.com/nasa/AmesGCM).
 	Author: fabiomassimo.grasso@cnr.it
 	April 2024
 
@@ -69,11 +69,8 @@ From: ubuntu:18.04
         cd /opt
         tar xzvf netcdf-fortran-4.6.1.tar.gz
         cd /opt/netcdf-fortran-4.6.1
-        CPPFLAGS="-I/usr/local/include -DgFortran" LDFLAGS=-L/usr/local/lib \
-		FC=/usr/local/bin/mpif90 F77=/usr/local/bin/mpif77 CC=/usr/local/bin/mpicc \
-		F77FLAGS="-O3 -fno-second-underscore -fno-underscoring" FCFLAGS="-O3 -fno-second-underscore -fno-underscoring" FFLAGS="-O3 -fno-second-underscore -fno-underscoring" \
-		./configure --prefix=/usr/local --enable-shared
-        make check install
+        CPPFLAGS="-I/usr/local/include -DgFortran" LDFLAGS=-L/usr/local/lib FC=/usr/local/bin/mpif90 F77=/usr/local/bin/mpif77 CC=/usr/local/bin/mpicc F77FLAGS="-O3 -fno-second-underscore -fno-underscoring" FCFLAGS="-O3 -fno-second-underscore -fno-underscoring" FFLAGS="-O3 -fno-second-underscore -fno-underscoring" ./configure --prefix=/usr/local --enable-shared
+	make check install
 	ldconfig
 
 	cd /opt
