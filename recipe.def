@@ -87,8 +87,9 @@ From: ubuntu:18.04
 	cd AmesGCM/patches/
 	./apply_patch.sh
 	cd ../../../exec/ # from AmesGCM/patches
+	
+	mv /opt/astronomy.F90 /opt/AM4/src/FMS/astronomy/astronomy.F90
 	mv /opt/mkmf.template.mine ../bin/
         mv /opt/compile.mine . 
-	mv /opt/astronomy.F90 /opt/AM4/src/FMS/astronomy/astronomy.F90
 	./compile.mine
 	
