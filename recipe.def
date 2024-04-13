@@ -1,0 +1,92 @@
+BootStrap:library
+From: ubuntu:18.04
+
+%setup 
+	_pwd=$(pwd)
+	mkdir -p ${_pwd}/tmp
+	export SINGULARITY_TMPDIR=${_pwd}/tmp
+
+%help
+	Environment (Ubuntu 20.04 + mandatory and optional libs) for NASA AmesGCM (https://github.com/nasa/AmesGCM).
+	Author: fabiomassimo.grasso@cnr.it
+	April 2024
+
+%files
+	src/openmpi-4.1.6.tar.gz /opt
+        src/hdf5-1.12.3.tar.gz /opt
+        src/netcdf-c-4.9.2.tar.gz /opt
+        src/netcdf-fortran-4.6.1.tar.gz /opt
+	src/mkmf.template.mine /opt
+	src/compile.mine /opt
+
+%environment
+%post
+	apt-get update 
+	DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y --force-yes install tzdata
+	apt-get install -y --force-yes texinfo vim dialog locales libtool autoconf git flex gawk
+        apt-get install -y --force-yes build-essential gfortran zlib1g-dev csh libcurl4-gnutls-dev libssl-dev
+	apt-get install -y --force-yes libxml2-dev libsz2 zip unzip libssl-dev libaec-dev bison libjpeg-turbo8-dev libtiff-dev pkg-config python3 libblas-dev liblapack-dev
+	apt install -y gcc-8 g++-8 cpp-8 gfortran-8
+	update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 100 \
+		--slave /usr/bin/g++ g++ /usr/bin/g++-8 \
+		--slave /usr/bin/gcov gcov /usr/bin/gcov-8 \
+		--slave /usr/bin/gfortran gfortran /usr/bin/gfortran-8
+
+	apt-get install -y software-properties-common
+	add-apt-repository ppa:ubuntu-toolchain-r/test
+	apt-get update
+	apt-get install -y gcc-9 gfortran-9 g++-9
+	update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 200 \
+		--slave /usr/bin/g++ g++ /usr/bin/g++-9 \
+		--slave /usr/bin/gcov gcov /usr/bin/gcov-9 \
+		--slave /usr/bin/gfortran gfortran /usr/bin/gfortran-9
+
+	cd /opt
+	tar xzvf openmpi-4.1.6.tar.gz 
+	cd /opt/openmpi-4.1.6
+	CFLAGS=-m64 CXXFLAGS=-m64 FCFLAGS=-m64 ./configure --prefix=/usr/local --enable-static
+        make all install
+	ldconfig
+
+	cd /opt
+        tar xzvf hdf5-1.12.3.tar.gz
+        cd /opt/hdf5-1.12.3
+        CC=/usr/local/bin/mpicc FC=/usr/local/bin/mpif90 F90=/usr/local/bin/mpif90 FFLAGS=-I/usr/local/include CFLAGS=-I/usr/local/include CPPFLAGS=-I/usr/local/include \
+		./configure --enable-parallel --prefix=/usr/local --enable-fortran --with-zlib --with-szlib
+        make
+        make install
+	ldconfig
+
+	cd /opt
+        tar xvf netcdf-c-4.9.2.tar.gz
+        cd netcdf-c-4.9.2
+        CC=/usr/local/bin/mpicc LDFLAGS=-L/usr/local/lib CPPFLAGS=-I/usr/local/include \
+		 ./configure --prefix=/usr/local --disable-dap-remote-tests
+       	make check install
+	ldconfig
+ 
+        cd /opt
+        tar xzvf netcdf-fortran-4.6.1.tar.gz
+        cd /opt/netcdf-fortran-4.6.1
+        CPPFLAGS="-I/usr/local/include -DgFortran" LDFLAGS=-L/usr/local/lib \
+		FC=/usr/local/bin/mpif90 F77=/usr/local/bin/mpif77 CC=/usr/local/bin/mpicc \
+		F77FLAGS="-O3 -fno-second-underscore -fno-underscoring" FCFLAGS="-O3 -fno-second-underscore -fno-underscoring" FFLAGS="-O3 -fno-second-underscore -fno-underscoring" \
+		./configure --prefix=/usr/local --enable-shared
+        make check install
+	ldconfig
+
+	cd /opt
+	git clone --recursive --branch 2021.03 https://github.com/NOAA-GFDL/AM4.git
+	cd AM4/src/
+	rm -rf ice_param	
+	git checkout -b mars_branch
+	git submodule add https://www.github.com/nasa/AmesGCM.git
+	git submodule add https://github.com/NOAA-GFDL/mkmf.git
+	git submodule add https://github.com/NOAA-GFDL/FRE.git
+	cd AmesGCM/patches/
+	./apply_patch.sh
+	cd ../../../exec/ # from AmesGCM/patches
+	mv /opt/mkmf.template.mine ../bin/
+        mv /opt/compile.mine . 
+	./compile.mine
+	
