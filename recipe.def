@@ -69,7 +69,7 @@ From: ubuntu:18.04
         cd /opt
         tar xzvf netcdf-fortran-4.6.1.tar.gz
         cd /opt/netcdf-fortran-4.6.1
-        CPPFLAGS="-I/usr/local/include -DgFortran" LDFLAGS=-L/usr/local/lib FC=/usr/local/bin/mpif90 F77=/usr/local/bin/mpif77 CC=/usr/local/bin/mpicc F77FLAGS="-O3 -fno-second-underscore -fno-underscoring" FCFLAGS="-O3 -fno-second-underscore -fno-underscoring" FFLAGS="-O3 -fno-second-underscore -fno-underscoring" ./configure --prefix=/usr/local --enable-shared
+        CPPFLAGS="-I/usr/local/include -DgFortran" LDFLAGS=-L/usr/local/lib FC=/usr/local/bin/mpif90 F77=/usr/local/bin/mpif77 CC=/usr/local/bin/mpicc F77FLAGS="-O3 -fno-second-underscore" FCFLAGS="-O3 -fno-second-underscore" FFLAGS="-O3 -fno-second-underscore" ./configure --prefix=/usr/local --enable-shared
 	make check install
 	ldconfig
 
