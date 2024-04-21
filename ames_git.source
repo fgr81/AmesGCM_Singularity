@@ -1,0 +1,17 @@
+_pwd=$(pwd)
+
+git clone --recursive --branch 2021.03 https://github.com/NOAA-GFDL/AM4.git
+cd AM4/src/
+rm -rf ice_param	
+git checkout -b mars_branch
+git submodule add https://www.github.com/nasa/AmesGCM.git
+git submodule add https://github.com/NOAA-GFDL/mkmf.git
+git submodule add https://github.com/NOAA-GFDL/FRE.git
+cd AmesGCM/patches/
+./apply_patch.sh
+
+cd $_pwd
+cp $_pwd/src/mkmf.template.mine AM4/bin/
+cp $_pwd/src/compile.mine AM4/exec/
+singularity exec -B ./AM4:/opt/AM4 --pwd /opt/AM4/exec ames_env.sif ./compile.mine
+	

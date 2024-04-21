@@ -4,3 +4,4 @@ src/mk*
 *_sb*
 *.sif
 tmp
+AM4*
