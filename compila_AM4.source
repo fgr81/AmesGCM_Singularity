@@ -13,5 +13,6 @@ cd AmesGCM/patches/
 cd $_pwd
 cp $_pwd/src/mkmf.template.mine AM4/bin/
 cp $_pwd/src/compile.mine AM4/exec/
+cp $_pwd/src/fms_mars_default_v3.1.fmg AM4/src
 singularity exec -B ./AM4:/opt/AM4 --pwd /opt/AM4/exec ames_env.sif ./compile.mine
 	

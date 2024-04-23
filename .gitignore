@@ -5,3 +5,7 @@ src/mk*
 *.sif
 tmp
 AM4*
+cestino*
+openmpi-4.1.6/
+openmpi-buld/
+
