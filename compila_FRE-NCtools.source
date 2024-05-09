@@ -1,0 +1,15 @@
+###
+# fmg 090524
+# da pagina 61 in poi di NASA_Ames_Mars_GCM_3_1_User_Guide.pdf
+###
+
+cp AM4/src/AmesGCM/patches/srcFRE.patch .
+git clone --recursive https://github.com/NOAA-GFDL/FRE-NCtools
+cd FRE-NCtools
+git checkout -b mars_branch && git apply --reject --whitespace=fix ../srcFRE.patch
+
+cd ..
+singularity exec -B ./FRE-NCtools:/opt/FRE-NCtools --pwd /opt/FRE-NCtools ames_env.sif autoreconf -i
+mkdir -p FRE-NCtools/build
+singularity exec -B ./FRE-NCtools:/opt/FRE-NCtools --pwd /opt/FRE-NCtools/build ames_env.sif ../configure
+singularity exec -B ./FRE-NCtools:/opt/FRE-NCtools --pwd /opt/FRE-NCtools/build ames_env.sif make 
